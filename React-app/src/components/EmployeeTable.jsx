@@ -20,7 +20,6 @@ function EmployeeTable() {
     getListEmployeeLoading,
     getListEmployeeData,
     getListEmployeeErr,
-    deletEmployeeLoading,
     deleteEmployeeData,
   } = useSelector((state) => state.employeeReducer);
 

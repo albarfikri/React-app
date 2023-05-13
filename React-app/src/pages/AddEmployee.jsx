@@ -10,9 +10,12 @@ import { addEmployee } from '../actions/EmployeeAction';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
+import MenuItem from '@mui/material/MenuItem';
 
 const AddEmployee = () => {
-  const [jsonResults, setJsonResults] = useState([]);
+  const [jsonResultsProvinsi, setJsonResultsProvinsi] = useState([]);
+  const [jsonResultsKota, setJsonResultsKota] = useState([]);
+  const [jsonResultsKecamatan, setJsonResultsKecamatan] = useState([]);
   const [nama, setNama] = useState('');
   const [jalan, setJalan] = useState('');
   const [provinsi, setProvinsi] = useState('');
@@ -30,10 +33,24 @@ const AddEmployee = () => {
     axios
       .get('https://dev.farizdotid.com/api/daerahindonesia/provinsi')
       .then((response) => response.data.provinsi)
-      .then((json) => setJsonResults(json));
+      .then((json) => setJsonResultsProvinsi(json));
   }, []);
 
-  useEffect(() => {});
+  useEffect(() => {
+    axios
+      .get('https://dev.farizdotid.com/api/daerahindonesia/kota?id_provinsi=32')
+      .then((response) => response.data.kota_kabupaten)
+      .then((json) => setJsonResultsKota(json));
+  }, []);
+
+  useEffect(() => {
+    axios
+      .get(
+        'https://dev.farizdotid.com/api/daerahindonesia/kecamatan?id_kota=3214'
+      )
+      .then((response) => response.data.kecamatan)
+      .then((json) => setJsonResultsKecamatan(json));
+  }, []);
 
   const handleDataSubmit = (event) => {
     //removing reloading function
@@ -106,7 +123,7 @@ const AddEmployee = () => {
                     disablePortal
                     id="province_list"
                     getOptionLabel={(jsonResults) => `${jsonResults.nama}`}
-                    options={jsonResults}
+                    options={jsonResultsProvinsi}
                     onChange={(event, value) => {
                       setProvinsi(value.nama);
                     }}
@@ -121,27 +138,49 @@ const AddEmployee = () => {
                     fullWidth
                   />
                 </Grid>
-                <Grid xs={12} item>
+                <Grid xs={12} sm={6} item>
                   <TextField
-                    id="standard-basic"
+                    id="outlined-select-currency"
+                    select
+                    align="center"
+                    inputProps={{ style: { textAlign: 'center' } }}
                     label="Kabupaten"
                     variant="outlined"
                     placeholder="Masukan Kabupaten"
+                    value={kabupaten}
                     onChange={(event) => setKabupaten(event.target.value)}
                     fullWidth
                     required
-                  />
+                  >
+                    {console.log(jsonResultsKota)}
+                    {jsonResultsKota.map((option) => (
+                      <MenuItem key={option.id} value={option.nama}>
+                        {option.nama}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
-                <Grid xs={12} item>
+                <Grid xs={12} sm={6} item>
                   <TextField
-                    id="standard-basic"
+                    id="outlined-select-currency"
+                    select
+                    align="center"
+                    inputProps={{ style: { textAlign: 'center' } }}
                     label="Kecamatan"
                     variant="outlined"
-                    placeholder="Masukan Kecamatan"
+                    placeholder="Masukan Kabupaten"
+                    value={kecamatan}
                     onChange={(event) => setKecamatan(event.target.value)}
                     fullWidth
                     required
-                  />
+                  >
+                    {console.log(jsonResultsKecamatan)}
+                    {jsonResultsKecamatan.map((option) => (
+                      <MenuItem key={option.id} value={option.nama}>
+                        {option.nama}
+                      </MenuItem>
+                    ))}
+                  </TextField>
                 </Grid>
                 <Grid xs={12} item>
                   <TextField

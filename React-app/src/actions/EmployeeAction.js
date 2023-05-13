@@ -29,7 +29,7 @@ export const getListEmployee = () => {
     axios({
       method: 'get',
       url: `${URL}/pegawai`,
-      timeout: 12000,
+      timeout: 120000,
     })
       .then((response) => {
         dispatch({
@@ -52,7 +52,7 @@ export const addEmployee = (employeeData) => {
     axios({
       method: 'post',
       url: `${URL}/pegawai`,
-      timeout: 12000,
+      timeout: 120000,
       data: employeeData,
     })
       .then((response) => {
@@ -76,7 +76,7 @@ export const deleteEmployee = (id) => {
     axios({
       method: 'delete',
       url: `${URL}/pegawai/` + id,
-      timeout: 12000,
+      timeout: 120000,
     })
       .then((response) => {
         console.log('Adding data', response.data);
@@ -111,7 +111,7 @@ export const updateEmployee = (employee) => {
     axios({
       method: 'put',
       url: `${URL}/pegawai/` + employee.id,
-      timeout: 12000,
+      timeout: 120000,
       data: employee,
     })
       .then((response) => {
