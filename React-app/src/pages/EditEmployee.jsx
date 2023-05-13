@@ -6,23 +6,24 @@ import axios from 'axios';
 import AddIcon from '@mui/icons-material/Add';
 import Button from '@mui/material/Button';
 import { useDispatch, useSelector } from 'react-redux';
-import { addEmployee } from '../actions/EmployeeAction';
+import { updateEmployee } from '../actions/EmployeeAction';
 import Alert from '@mui/material/Alert';
 import CircularProgress from '@mui/material/CircularProgress';
 import { useNavigate } from 'react-router-dom';
 
-const AddEmployee = () => {
+const EditEmployee = () => {
   const [jsonResults, setJsonResults] = useState([]);
+  const [id, setId] = useState('');
   const [nama, setNama] = useState('');
   const [jalan, setJalan] = useState('');
   const [provinsi, setProvinsi] = useState('');
   const [kabupaten, setKabupaten] = useState('');
   const [kecamatan, setKecamatan] = useState('');
   const [kelurahan, setKelurahan] = useState('');
+
   const dispatch = useDispatch();
-  const { addEmployeeLoading, addEmployeeData } = useSelector(
-    (state) => state.employeeReducer
-  );
+  const { detailEmployeeData, updateEmployeeData, updateEmployeeLoading } =
+    useSelector((state) => state.employeeReducer);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
 
@@ -33,13 +34,24 @@ const AddEmployee = () => {
       .then((json) => setJsonResults(json));
   }, []);
 
-  useEffect(() => {});
+  useEffect(() => {
+    if (detailEmployeeData) {
+      setId(detailEmployeeData.id);
+      setNama(detailEmployeeData.nama);
+      setJalan(detailEmployeeData.jalan);
+      setProvinsi(detailEmployeeData.provinsi);
+      setKabupaten(detailEmployeeData.kabupaten);
+      setKecamatan(detailEmployeeData.kecamatan);
+      setKelurahan(detailEmployeeData.kelurahan);
+    }
+  }, [detailEmployeeData, dispatch]);
 
   const handleDataSubmit = (event) => {
     //removing reloading function
     event.preventDefault();
     dispatch(
-      addEmployee({
+      updateEmployee({
+        id: id,
         nama: nama,
         jalan: jalan,
         provinsi: provinsi,
@@ -53,13 +65,13 @@ const AddEmployee = () => {
   return (
     <>
       <Typography variant="h4" component="h5" align="center">
-        Add New Employee
+        Edit Employee
       </Typography>
 
       <form onSubmit={(event) => handleDataSubmit(event)}>
         <Container maxWidth="sm" align="center" sx={{ mt: 2 }}>
           <Card>
-            {addEmployeeData && open ? (
+            {updateEmployeeData && open ? (
               <Alert
                 action={
                   <Button
@@ -74,7 +86,7 @@ const AddEmployee = () => {
                   </Button>
                 }
               >
-                Data is saved Successfully, check this out !
+                Data is edit Successfully, check this out !
               </Alert>
             ) : null}
             <CardContent>
@@ -85,6 +97,7 @@ const AddEmployee = () => {
                     label="Nama"
                     variant="outlined"
                     placeholder="Masukan Nama anda"
+                    value={nama}
                     onChange={(event) => setNama(event.target.value)}
                     fullWidth
                     required
@@ -96,6 +109,7 @@ const AddEmployee = () => {
                     label="Jalan"
                     variant="outlined"
                     placeholder="Masukan Jalan"
+                    value={jalan}
                     onChange={(event) => setJalan(event.target.value)}
                     fullWidth
                     required
@@ -110,6 +124,7 @@ const AddEmployee = () => {
                     onChange={(event, value) => {
                       setProvinsi(value.nama);
                     }}
+                    value={console.log(provinsi)}
                     renderInput={(params) => (
                       <TextField
                         {...params}
@@ -127,6 +142,7 @@ const AddEmployee = () => {
                     label="Kabupaten"
                     variant="outlined"
                     placeholder="Masukan Kabupaten"
+                    value={kabupaten}
                     onChange={(event) => setKabupaten(event.target.value)}
                     fullWidth
                     required
@@ -138,6 +154,7 @@ const AddEmployee = () => {
                     label="Kecamatan"
                     variant="outlined"
                     placeholder="Masukan Kecamatan"
+                    value={kecamatan}
                     onChange={(event) => setKecamatan(event.target.value)}
                     fullWidth
                     required
@@ -149,13 +166,14 @@ const AddEmployee = () => {
                     label="Kelurahan"
                     variant="outlined"
                     placeholder="Masukan Kelurahan"
+                    value={kelurahan}
                     onChange={(event) => setKelurahan(event.target.value)}
                     fullWidth
                     required
                   />
                 </Grid>
                 <Grid xs={12} item sx={{ mt: 2 }}>
-                  {addEmployeeLoading ? (
+                  {updateEmployeeLoading ? (
                     <CircularProgress />
                   ) : (
                     <Button
@@ -167,7 +185,7 @@ const AddEmployee = () => {
                         setOpen(true);
                       }}
                     >
-                      Add Data
+                      Edit Data
                     </Button>
                   )}
                 </Grid>
@@ -179,4 +197,4 @@ const AddEmployee = () => {
     </>
   );
 };
-export default AddEmployee;
+export default EditEmployee;

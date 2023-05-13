@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -10,21 +11,41 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import ModeIcon from '@mui/icons-material/Mode';
 import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getListEmployee } from '../actions/EmployeeAction';
+import { detailEmployee, getListEmployee } from '../actions/EmployeeAction';
+import ConfirmationDialog from './ConfirmationDialog';
+import { useNavigate } from 'react-router-dom';
 
 function EmployeeTable() {
-  const { getListEmployeeLoading, getListEmployeeData, getListEmployeeErr } =
-    useSelector((state) => state.employeeReducer);
+  const {
+    getListEmployeeLoading,
+    getListEmployeeData,
+    getListEmployeeErr,
+    deletEmployeeLoading,
+    deleteEmployeeData,
+  } = useSelector((state) => state.employeeReducer);
+
+  const [open, setOpen] = useState(false);
+  const [id, setId] = useState(0);
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     console.log('1. use effect component does mount');
     dispatch(getListEmployee());
   }, [dispatch]);
 
+  useEffect(() => {
+    if (deleteEmployeeData) {
+      dispatch(getListEmployee());
+    }
+  }, [deleteEmployeeData, dispatch]);
+
   return (
     <>
+      {open && (
+        <ConfirmationDialog openDialog={open} setOpenData={setOpen} id={id} />
+      )}
       <TableContainer
         component={Paper}
         sx={{
@@ -80,10 +101,23 @@ function EmployeeTable() {
                     <TableCell align="center">{employee.kelurahan}</TableCell>
                     <TableCell align="center">
                       <Box display="flex">
-                        <IconButton aria-label="delete">
+                        <IconButton
+                          onClick={() => {
+                            dispatch(detailEmployee(employee));
+                            navigate('/edit');
+                          }}
+                          aria-label="edit"
+                        >
                           <ModeIcon color="success" />
                         </IconButton>
-                        <IconButton aria-label="delete">
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => {
+                            setOpen(true);
+                            setId(employee.id);
+                            console.log(open);
+                          }}
+                        >
                           <DeleteIcon color="error" />
                         </IconButton>
                       </Box>
